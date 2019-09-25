@@ -1,8 +1,8 @@
 # EE271 - Advanced Digital System Design and Synthesis (Fall 2019)
-###`by Dr. Binh Le`
+### `by Dr. Binh Le`
 
 ## Mainly used language:
-###`Verilog`
+### `Verilog`
 ## EDA tools:  
 
 - Synopsys Verilog Compiler Simulator (VCS)
