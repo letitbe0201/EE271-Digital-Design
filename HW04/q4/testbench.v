@@ -6,6 +6,10 @@ module SR_latch_tb();
   SR_latch u(.q(q), .qn(qn), .s(s), .r(r));
 
   initial begin
+
+    #10
+    s = 1;
+    r = 0;
     #10
     s = 0;
     r = 0;
@@ -13,15 +17,11 @@ module SR_latch_tb();
     s = 0;
     r = 1;
     #10
-    s = 1;
-    r = 0;
-    #10
-    s = 1;
-    r = 1;
-    #10
     s = 0;
     r = 0;
-    #10;
+    #10
+    $finish;
+
   end
 
 endmodule
