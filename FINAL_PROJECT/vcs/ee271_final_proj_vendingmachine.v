@@ -1,8 +1,9 @@
-module ee271_final_proj_vendingmachine(clk, confirm, cancel, coin, item_sel, amt_sel, a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg, item_name, item_amt, change, state, next_state);
+module ee271_final_proj_vendingmachine(clk, confirm, cancel, coin, item_sel, amt_sel, done, a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg, item_name, item_amt, change, state, next_state);
   input        clk, confirm, cancel;
   input  [2:0] coin;
   input  [2:0] item_sel;
   input  [1:0] amt_sel;
+  output reg       done;
   output reg [1:0] a_amt, b_amt, c_amt, d_amt, e_amt;
   output reg [5:0] a_chg, b_chg, c_chg, d_chg, e_chg;
   output reg [2:0] item_name;
@@ -245,83 +246,104 @@ module ee271_final_proj_vendingmachine(clk, confirm, cancel, coin, item_sel, amt
 	  begin
 	    state <= S00;
 	    {a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg} = OC00;
+	    done  <= 0;
 	  end
 	else
 	  begin
-	    state <= next_state;
-	    case (item_sel)
-	      A:
-	        if (a_amt == amt_sel)
-		  begin
-		    item_name <= A;
-		    item_amt  <= a_amt;
-		    change    <= a_chg;
-		  end
-		else
-		  begin
-		    item_name <= A;
-		    item_amt  <= 0;
-		    change    <= 0;
-	  	  end
-	      B:
-	        if (b_amt == amt_sel)
-		  begin
-		    item_name <= B;
-		    item_amt  <= b_amt;
-		    change    <= b_chg;
-		  end
-		else
-		  begin
-		    item_name <= B;
-		    item_amt  <= 0;
-		    change    <= 0;
-	  	  end
-	      C:
-	        if (c_amt == amt_sel)
-		  begin
-		    item_name <= C;
-		    item_amt  <= c_amt;
-		    change    <= c_chg;
-		  end
-		else
-		  begin
-		    item_name <= C;
-		    item_amt  <= 0;
-		    change    <= 0;
-	  	  end
-	      D:
-	        if (d_amt == amt_sel)
-		  begin
-		    item_name <= D;
-		    item_amt  <= d_amt;
-		    change    <= d_chg;
-		  end
-		else
-		  begin
-		    item_name <= D;
-		    item_amt  <= 0;
-		    change    <= 0;
-	  	  end
-	      E:
-	        if (e_amt == amt_sel)
-		  begin
-		    item_name <= E;
-		    item_amt  <= e_amt;
-		    change    <= e_chg;
-		  end
-		else
-		  begin
-		    item_name <= E;
-		    item_amt  <= 0;
-		    change    <= 0;
-	  	  end
-	      default:
-		begin
-		  item_name <= 0;
-		  item_amt  <= 0;
-		  change    <= 0;
-		end
-	    endcase
+	    if (done)
+	      begin
+	        state <= S00;
+	        {a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg} = OC00;
+	        done  <= 0;
+	      end
+	    else
+	      begin
+	    	state <= next_state;
+	    	case (item_sel)
+	      	  A:
+	            if (a_amt == amt_sel)
+		      begin
+		        item_name <= A;
+		    	item_amt  <= a_amt;
+		    	change    <= a_chg;
+			done      <= 1;
+		      end
+		    else
+		      begin
+		    	item_name <= A;
+		    	item_amt  <= 0;
+		    	change    <= 0;
+			done      <= 0;
+	  	      end
+	      	  B:
+	            if (b_amt == amt_sel)
+		      begin
+		    	item_name <= B;
+		    	item_amt  <= b_amt;
+		    	change    <= b_chg;
+			done      <= 1;
+		      end
+		    else
+		      begin
+		    	item_name <= B;
+		    	item_amt  <= 0;
+		    	change    <= 0;
+			done      <= 0;
+	  	      end
+	      	  C:
+	            if (c_amt == amt_sel)
+		      begin
+		    	item_name <= C;
+		    	item_amt  <= c_amt;
+		    	change    <= c_chg;
+			done      <= 1;
+		      end
+		    else
+		      begin
+		    	item_name <= C;
+		    	item_amt  <= 0;
+		    	change    <= 0;
+			done      <= 0;
+	  	      end
+	      	  D:
+	            if (d_amt == amt_sel)
+		      begin
+		        item_name <= D;
+		    	item_amt  <= d_amt;
+		    	change    <= d_chg;
+			done      <= 1;
+		      end
+		    else
+		      begin
+		    	item_name <= D;
+		    	item_amt  <= 0;
+		    	change    <= 0;
+			done      <= 0;
+	  	      end
+	      	  E:
+	            if (e_amt == amt_sel)
+		      begin
+		    	item_name <= E;
+		    	item_amt  <= e_amt;
+		    	change    <= e_chg;
+			done      <= 1;
+		      end
+		    else
+		      begin
+		    	item_name <= E;
+		    	item_amt  <= 0;
+		    	change    <= 0;
+			done      <= 0;
+	  	      end
+	      	  default:
+		    begin
+		      item_name <= 0;
+		      item_amt  <= 0;
+		      change    <= 0;
+		      done      <= 0;
+		    end
+	        endcase
+	      end
 	  end
       end
   
