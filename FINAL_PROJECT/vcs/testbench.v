@@ -8,12 +8,12 @@ module ee271_final_proj_vendingmachine_tb();
   wire [2:0] item_name;
   wire [1:0] item_amt;
   wire [5:0] change;
-  wire [2:0] state, next_state;
+  wire [4:0] state, next_state;
 
   ee271_final_proj_vendingmachine test(clk, confirm, cancel, coin, item_sel, amt_sel, a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg, item_name, item_amt, change, state, next_state);
   
   initial begin
-    $monitor("c_amt: %b, c_chg: %b, State: %b, next state: %b, Item: %b, Amount: %b, Change: %d @ %0t", c_amt, c_chg, state, next_state, item_name, item_amt, change, $time);
+    $monitor("b_amt: %d, State: %d, next_state: %d, Item: %d, Amount: %d, Change: %d @ %0t", b_amt, state, next_state, item_name, item_amt, change, $time);
     $dumpfile("ee271_final_proj_vendingmachine.vcd");
     $dumpvars();
     #200 disable clock_loop;
@@ -29,17 +29,17 @@ module ee271_final_proj_vendingmachine_tb();
   end
 
   initial begin
-    #5 item_sel = 3'b011;
-    #3 amt_sel = 2'b11;
+    #5 item_sel = 3'b010;
+    #3 amt_sel = 2'b10;
     //#2 coin = 3'b100;
-    #6 coin = 3'b100;
-    #1 coin = 3'b000;
-    #20
+    #6 coin = 3'b010;
+    #2 coin = 3'b010;
+    #4 coin = 3'b000;
     $finish;
     //#1 coin = 3'b001;
     //#2 coin = 3'b010;
-    #100 cancel = 1;
-    #2 cancel = 0;
+    //#100 cancel = 1;
+    //#2 cancel = 0;
   end
 
 endmodule

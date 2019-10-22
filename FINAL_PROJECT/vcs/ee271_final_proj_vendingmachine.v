@@ -1,28 +1,34 @@
-module ee271_final_proj_vendingmachine(clk, confirm, cancel, coin, item_sel, amt_sel, done, a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg, item_name, item_amt, change, state, next_state);
+module ee271_final_proj_vendingmachine(clk, confirm, cancel, coin, item_sel, amt_sel, a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg, item_name, item_amt, change, state, next_state);
   input        clk, confirm, cancel;
   input  [2:0] coin;
   input  [2:0] item_sel;
   input  [1:0] amt_sel;
-  output reg       done;
   output reg [1:0] a_amt, b_amt, c_amt, d_amt, e_amt;
   output reg [5:0] a_chg, b_chg, c_chg, d_chg, e_chg;
   output reg [2:0] item_name;
   output reg [1:0] item_amt;
   output reg [5:0] change;
-  output reg [2:0] state, next_state;
+  output reg [4:0] state, next_state;
 
   parameter [2:0]     A =  3'b001;
   parameter [2:0]     B =  3'b010;
   parameter [2:0]     C =  3'b011;
   parameter [2:0]     D =  3'b100;
   parameter [2:0]     E =  3'b101;
-  parameter [2:0]   S00 =  3'b000;
-  parameter [2:0]   S05 =  3'b001;
-  parameter [2:0]   S10 =  3'b010;
-  parameter [2:0]   S15 =  3'b011;
-  parameter [2:0]   S20 =  3'b100;
-  parameter [2:0]   S25 =  3'b101;
-  parameter [2:0]   S30 =  3'b110;
+
+  parameter [3:0] price_a = 4'b0101;
+  parameter [3:0] price_b = 4'b0110;
+  parameter [3:0] price_c = 4'b0111;
+  parameter [3:0] price_d = 4'b1000;
+  parameter [3:0] price_e = 4'b1010;
+  
+  parameter [4:0]   S00 =  5'b00000;
+  parameter [4:0]   S05 =  5'b00101;
+  parameter [4:0]   S10 =  5'b01010;
+  parameter [4:0]   S15 =  5'b01111;
+  parameter [4:0]   S20 =  5'b10100;
+  parameter [4:0]   S25 =  5'b11001;
+  parameter [4:0]   S30 =  5'b11110;
   parameter [39:0] OC00 = 40'b0000000000000000000000000000000000000000;
   parameter [39:0] OC05 = 40'b0100000000000000000000000000000000000000;
   parameter [39:0] OC10 = 40'b1001010101000000000100000011000010000000;
@@ -246,104 +252,83 @@ module ee271_final_proj_vendingmachine(clk, confirm, cancel, coin, item_sel, amt
 	  begin
 	    state <= S00;
 	    {a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg} = OC00;
-	    done  <= 0;
 	  end
 	else
 	  begin
-	    if (done)
-	      begin
-	        state <= S00;
-	        {a_amt, b_amt, c_amt, d_amt, e_amt, a_chg, b_chg, c_chg, d_chg, e_chg} = OC00;
-	        done  <= 0;
-	      end
-	    else
-	      begin
-	    	state <= next_state;
-	    	case (item_sel)
-	      	  A:
-	            if (a_amt == amt_sel)
-		      begin
-		        item_name <= A;
-		    	item_amt  <= a_amt;
-		    	change    <= a_chg;
-			done      <= 1;
-		      end
-		    else
-		      begin
-		    	item_name <= A;
-		    	item_amt  <= 0;
-		    	change    <= 0;
-			done      <= 0;
-	  	      end
-	      	  B:
-	            if (b_amt == amt_sel)
-		      begin
-		    	item_name <= B;
-		    	item_amt  <= b_amt;
-		    	change    <= b_chg;
-			done      <= 1;
-		      end
-		    else
-		      begin
-		    	item_name <= B;
-		    	item_amt  <= 0;
-		    	change    <= 0;
-			done      <= 0;
-	  	      end
-	      	  C:
-	            if (c_amt == amt_sel)
-		      begin
-		    	item_name <= C;
-		    	item_amt  <= c_amt;
-		    	change    <= c_chg;
-			done      <= 1;
-		      end
-		    else
-		      begin
-		    	item_name <= C;
-		    	item_amt  <= 0;
-		    	change    <= 0;
-			done      <= 0;
-	  	      end
-	      	  D:
-	            if (d_amt == amt_sel)
-		      begin
-		        item_name <= D;
-		    	item_amt  <= d_amt;
-		    	change    <= d_chg;
-			done      <= 1;
-		      end
-		    else
-		      begin
-		    	item_name <= D;
-		    	item_amt  <= 0;
-		    	change    <= 0;
-			done      <= 0;
-	  	      end
-	      	  E:
-	            if (e_amt == amt_sel)
-		      begin
-		    	item_name <= E;
-		    	item_amt  <= e_amt;
-		    	change    <= e_chg;
-			done      <= 1;
-		      end
-		    else
-		      begin
-		    	item_name <= E;
-		    	item_amt  <= 0;
-		    	change    <= 0;
-			done      <= 0;
-	  	      end
-	      	  default:
-		    begin
-		      item_name <= 0;
-		      item_amt  <= 0;
-		      change    <= 0;
-		      done      <= 0;
-		    end
-	        endcase
-	      end
+	    state <= next_state;
+	    case (item_sel)
+	      A:
+	        if (a_amt == amt_sel)
+		  begin
+		    item_name <= A;
+		    item_amt  <= a_amt;
+		    change    <= next_state - (price_a * amt_sel);
+		  end
+		else
+		  begin
+		    item_name <= A;
+		    item_amt  <= 0;
+		    change    <= 0;
+	  	  end
+	      B:
+	        if (b_amt >= amt_sel)//////
+		  begin
+		    item_name <= B;
+		    item_amt  <= amt_sel;
+		    change    <= next_state - (price_b * amt_sel);
+		  end
+		else
+		  begin
+		    item_name <= B;
+		    item_amt  <= 0;
+		    change    <= 0;
+	  	  end
+	      C:
+	        if (c_amt == amt_sel)
+		  begin
+		    item_name <= C;
+		    item_amt  <= c_amt;
+		    change    <= next_state - (price_c * amt_sel);
+		  end
+		else
+		  begin
+		    item_name <= C;
+		    item_amt  <= 0;
+		    change    <= 0;
+	  	  end
+	      D:
+	        if (d_amt == amt_sel)
+		  begin
+		    item_name <= D;
+		    item_amt  <= d_amt;
+		    change    <= next_state - (price_d * amt_sel);
+		  end
+		else
+		  begin
+		    item_name <= D;
+		    item_amt  <= 0;
+		    change    <= 0;
+	  	  end
+	      E:
+	        if (e_amt == amt_sel)
+		  begin
+		    item_name <= E;
+		    item_amt  <= e_amt;
+		    change    <= next_state - (price_e * amt_sel);
+		  end
+		else
+		  begin
+		    item_name <= E;
+		    item_amt  <= 0;
+		    change    <= 0;
+	  	  end
+	      default:
+		begin
+		  item_name <= 0;
+		  item_amt  <= 0;
+		  change    <= 0;
+		end
+	    endcase
 	  end
       end
   
